@@ -3,11 +3,11 @@ import os
 
 import aws_cdk as cdk
 
-from infra_code_tool_kit.infra_code_tool_kit_stack import InfraCodeToolKitStack
+from union_infra.union_infra_stack import UnionInfraStack
 
 
 app = cdk.App()
-InfraCodeToolKitStack(app, "InfraCodeToolKitStack",
+UnionInfraStack(app, "UnionInfraStack",
     # If you don't specify 'env', this stack will be environment-agnostic.
     # Account/Region-dependent features and context lookups will not work,
     # but a single synthesized template can be deployed anywhere.
