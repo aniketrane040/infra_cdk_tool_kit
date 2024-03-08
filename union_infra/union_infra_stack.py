@@ -6,11 +6,15 @@ from aws_cdk import (
     aws_elasticloadbalancingv2 as elbv2
 )
 from constructs import Construct
+import os
 
 class UnionInfraStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
+
+        db_connection_url = os.environ.get('CONNECTION_URL')
+        app_port = os.environ.get('PORT', 3000)
 
         vpc = ec2.Vpc(self, 
                     'union_vpc',
@@ -35,17 +39,21 @@ class UnionInfraStack(Stack):
                                     image=ecs.ContainerImage.from_registry('public.ecr.aws/m7p9x7q8/union-backend-app:latest'),
                                     cpu=512,
                                     memory_limit_mib=512,
-                                    port_mappings=[ecs.PortMapping(container_port=3000)])
-
-        union_task_def.add_container('mongo_container',
-                                    image=ecs.ContainerImage.from_registry('mongo'),
-                                    cpu=512,
-                                    memory_limit_mib=512,
-                                    port_mappings=[ecs.PortMapping(container_port=27017)],
+                                    port_mappings=[ecs.PortMapping(container_port=3000)],
                                     environment={
-                                        'MONGO_INITDB_ROOT_USERNAME': 'mongoadmin',
-                                        'MONGO_INITDB_ROOT_PASSWORD': 'secret'
+                                        'CONNECTION_URL': db_connection_url,
+                                        'PORT': app_port
                                     })
+
+        # union_task_def.add_container('mongo_container',
+        #                             image=ecs.ContainerImage.from_registry('mongo'),
+        #                             cpu=512,
+        #                             memory_limit_mib=512,
+        #                             port_mappings=[ecs.PortMapping(container_port=27017)],
+        #                             environment={
+        #                                 'MONGO_INITDB_ROOT_USERNAME': 'mongoadmin',
+        #                                 'MONGO_INITDB_ROOT_PASSWORD': 'secret'
+        #                             })
 
         cluster = ecs.Cluster(self,'union_cluster',vpc=vpc)
 
