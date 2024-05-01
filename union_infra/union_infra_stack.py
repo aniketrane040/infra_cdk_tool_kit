@@ -13,8 +13,8 @@ class UnionInfraStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        db_connection_url = os.environ.get('CONNECTION_URL')
-        app_port = os.environ.get('PORT', 3000)
+        db_connection_url = "mongodb+srv://tempActions:6UP1U0aMV5J9yH8X@cluster0.j8fs6vi.mongodb.net/?retryWrites=true&w=majority"
+        app_port = "3000"
 
         vpc = ec2.Vpc(self, 
                     'union_vpc',
